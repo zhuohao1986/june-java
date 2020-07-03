@@ -47,7 +47,8 @@ public class TreeTests {
 	
 	@Test
 	void test_tree_02() throws JsonProcessingException {
-		TreeNode treeNode1 = new TreeNode<String, Integer>();
+		TreeNode treeNode1 = new TreeNode<String,Integer>();
+	
 		treeNode1.setKey("key");
 		treeNode1.setOrder(0);
 		treeNode1.setParent("");
