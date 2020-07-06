@@ -2,6 +2,7 @@ package com.example.alg;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,7 +25,9 @@ public class Tree<K, Item> {
 
 	public String toJson() throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
-		String string = mapper.writeValueAsString(bulid(root, ""));
+		LinkedList<TreeNode> result = new LinkedList<TreeNode>();
+		LinkedList<TreeNode> f = toSort(root,result,0);
+		String string = mapper.writeValueAsString(bulid(f, "0"));
 		return string;
 	}
 
@@ -48,5 +51,56 @@ public class Tree<K, Item> {
 			}
 		}
 		return trees;
+	}
+	
+	/**
+	 * 
+	 * @Description: 排序
+	 * @param list
+	 * @param result
+	 * @param father
+	 * @return
+	 * LinkedList<TreeNode>
+	 */
+	private static LinkedList<TreeNode> toSort(List<TreeNode> list,
+			LinkedList<TreeNode> result, int father) {
+		List<TreeNode> temp = new ArrayList<TreeNode>();
+		// 最高层,临时存放
+		for (int i = 0; i < list.size(); i++) {
+			int par = Integer.parseInt(list.get(i).getParent());
+			if (par == father) {
+				temp.add(list.get(i));
+			}
+		}
+ 
+		if (temp.size() < 1) {
+			return result;
+		} else { 
+			// 删除最高层
+			for (int j = 0; j < list.size(); j++) {
+				int part = Integer.parseInt(list.get(j).getParent());
+				if (part == father) {
+					list.remove(j);
+				}
+			}
+			// 对最高层排序
+			for (int i = 0; i < temp.size() - 1; i++) {
+				for (int j = i + 1; j < temp.size(); j++) {
+					if (temp.get(i).getOrder() > temp.get(j).getOrder()) {
+						TreeNode myTestTree = temp.get(i);
+						temp.set(i, temp.get(j));
+						temp.set(j, myTestTree);
+					}
+				}
+			}
+			// 递归
+			for (int i = 0; i < temp.size(); i++) {
+				result.add(temp.get(i));
+				int keys = Integer.parseInt(temp.get(i).getKey());
+				toSort(list, result, keys);
+			}
+			return result;
+		}
+ 
 	}
 }
